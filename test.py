@@ -6,5 +6,7 @@ my_deck.shuffle()
 
 
 
-for _ in range(3):
+for _ in range(2):
     print(my_deck.draw())
+
+print(my_deck)
