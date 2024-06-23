@@ -16,6 +16,7 @@ class BlackJackApp(App):
     NMB_DECKS = 8
     DECKS_BF_RS = 4
 
+
     def __init__(self, *args) -> None:
         import os
         abs_path: str = os.path.abspath(__file__)
@@ -25,7 +26,7 @@ class BlackJackApp(App):
         # Create cards
         deck: list = []
         for i in range(52):
-            
+            card = 
 
 
 
