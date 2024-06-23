@@ -32,7 +32,7 @@ print(len(deck.cards))
 
 # Deal a card
 card = deck.deal()
-print(card.rank, card.)
+print(card.rank, card.suit)
 
 print(len(deck.cards))
 
