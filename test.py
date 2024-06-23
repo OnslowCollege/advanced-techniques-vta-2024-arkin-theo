@@ -7,7 +7,7 @@ class Card:
 
 class Deck:
     suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
-    ranks = ["Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King", "Ace"]
+    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 
     def __init__(self):
         self.cards = [Card(suit, rank) for suit in self.suits for rank in self.ranks]
@@ -20,3 +20,21 @@ class Deck:
             return self.cards.pop()
         else:
             return None
+        
+# Create a new deck
+deck = Deck()
+
+# Shuffle the deck
+deck.shuffle()
+
+print(len(deck.cards))
+
+# Deal a card
+card = deck.deal()
+print(card.rank)
+
+print(len(deck.cards))
+
+
+# for cards in deck.cards:
+#     print(cards.rank)
