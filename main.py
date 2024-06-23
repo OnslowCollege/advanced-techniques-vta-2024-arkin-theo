@@ -10,6 +10,27 @@ import pandas as PD
 import remi.gui as GUI
 from remi import App, start
 
+class Card:
+    def __init__(self, suit, rank):
+        self.suit = suit
+        self.rank = rank
+
+class Deck:
+    suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
+    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+
+    def __init__(self, nmb_decks):
+        self.cards = [Card(suit, rank) for suit in self.suits for rank in self.ranks for _ in range(nmb_decks)]
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+    def deal(self):
+        if len(self.cards) > 0:
+            return self.cards.pop()
+        else:
+            return None
+
 
 class BlackJackApp(App):
 
@@ -23,10 +44,10 @@ class BlackJackApp(App):
         dir_name: str = os.path.dirname(abs_path)
         res_path: str = os.path.join(dir_name, "res")
 
-        # Create cards
-        deck: list = []
-        for i in range(52):
-            card = 
+        # Create dealer's shoe
+        d_shoe = Deck(self.NMB_DECKS)
+
+        player_hand = 
 
 
 
