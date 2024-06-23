@@ -12,6 +12,10 @@ from remi import App, start
 
 
 class BlackJackApp(App):
+
+    NMB_DECKS = 8
+    DECKS_BF_RS = 4
+
     def __init__(self, *args) -> None:
         import os
         abs_path: str = os.path.abspath(__file__)
