@@ -24,10 +24,13 @@ class Deck:
 # Create a new deck
 deck = Deck()
 
-# Shuffle the deck
-deck.shuffle()
+decks_list: list = [deck for _ in range(6)]
 
-print(len(deck.cards))
+# Shuffle the deck
+for deck in decks_list:
+    deck.shuffle()
+
+print(len(decks_list))
 
 # Deal a card
 card = deck.deal()
