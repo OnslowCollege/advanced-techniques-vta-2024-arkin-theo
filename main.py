@@ -22,6 +22,12 @@ class BlackJackApp(App):
         dir_name: str = os.path.dirname(abs_path)
         res_path: str = os.path.join(dir_name, "res")
 
+        # Create cards
+        deck: list = []
+        for i in range(52):
+            
+
+
 
     def main(self) -> GUI.Widget:
         return GUI.HBox
