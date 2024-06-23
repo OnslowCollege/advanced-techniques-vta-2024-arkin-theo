@@ -9,8 +9,8 @@ class Deck:
     suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
     ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
 
-    def __init__(self):
-        self.cards = [Card(suit, rank) for suit in self.suits for rank in self.ranks]
+    def __init__(self, nmb_decks):
+        self.cards = [Card(suit, rank) for suit in self.suits for rank in self.ranks for _ in range(nmb_decks)]
 
     def shuffle(self):
         random.shuffle(self.cards)
@@ -22,19 +22,17 @@ class Deck:
             return None
         
 # Create a new deck
-deck = Deck()
+deck = Deck(8)
 
-decks_list: list = [deck for _ in range(6)]
 
 # Shuffle the deck
-for deck in decks_list:
-    deck.shuffle()
+deck.shuffle()
 
-print(len(decks_list))
+print(len(deck.cards))
 
 # Deal a card
 card = deck.deal()
-print(card.rank)
+print(card.rank, card.)
 
 print(len(deck.cards))
 
