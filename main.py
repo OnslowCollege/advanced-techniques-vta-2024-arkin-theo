@@ -47,7 +47,7 @@ class BlackJackApp(App):
         # Create dealer's shoe
         d_shoe = Deck(self.NMB_DECKS)
 
-        player_hand = 
+        player_hand = d_shoe
 
 
 
