@@ -75,6 +75,7 @@ class ScoreText:
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+HIDDEN_NMB = 1
 
 class Main:
     def __init__(self):
@@ -122,7 +123,7 @@ class Main:
         self.current_card_image = None
         self.card_images = self.load_card_images()
 
-        image_path = "C:/Users/arkin/OneDrive/Documents/Blackjack/Sprites/KIN's_Playing_Cards/Back_1.png"
+        image_path = r"C:\Users\arkin\OneDrive\Documents\Blackjack-pygame\Sprites\KIN's_Playing_Cards\Back_1.png"
         self.card_back = pygame.image.load(image_path).convert_alpha()
         self.card_back = pygame.transform.scale(self.card_back, (94, 132))
 
@@ -133,6 +134,7 @@ class Main:
         self.draw_history_d = []
 
         self.d_hidden_card = ""
+        self.counter = 0
 
         self.p_turn = True
         self.hide_card = True
@@ -142,7 +144,7 @@ class Main:
         card_images = {}
         for suit in Deck.suits:
             for rank in Deck.ranks:
-                root_dir = "C:/Users/arkin/OneDrive/Documents/Blackjack/Sprites/KIN's_Playing_Cards"
+                root_dir = r"C:\Users\arkin\OneDrive\Documents\Blackjack-pygame\Sprites\KIN's_Playing_Cards"
 
                 # Update this to the correct path for your images
                 image_path = f"{root_dir}/{suit}_{rank}.png"
@@ -204,13 +206,13 @@ class Main:
         # dc_offset += 25
 
         for i, card in enumerate(self.previous_cards_d):
-            if i == 0 and self.p_turn:
+            if i == HIDDEN_NMB and self.p_turn:
                 self.screen.blit(
                     self.card_back, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
                 )
                 dc_offset += 25
 
-            if i != 0 and self.p_turn:
+            if i != HIDDEN_NMB and self.p_turn:
                 self.screen.blit(
                     card, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
                 )
@@ -318,12 +320,18 @@ class Main:
             else:
                 self.d_score.update_text(f"{self.d_total}")
 
-
+    # Change
     def card_drawn(self, onwer: str):
+
+
         card_drawn = self.d_shoe.deal()
         card_drawn.owner = onwer
 
         if self.d_hidden_card == "" and card_drawn.owner == "dealer":
+            self.counter += 1
+
+
+        if self.counter == HIDDEN_NMB:
             self.d_hidden_card = card_drawn.rank
 
         if card_drawn:
