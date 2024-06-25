@@ -82,7 +82,7 @@ class Main:
         card_images = {}
         for suit in Deck.suits:
             for rank in Deck.ranks:
-                root_dir = ""
+                root_dir = "C:/Users/arkin/OneDrive/Documents/Blackjack-pygame/Sprites/KIN's_Playing_Cards"
 
                 # Update this to the correct path for your images
                 image_path = f"{root_dir}/{suit}_{rank}.png"
@@ -112,10 +112,6 @@ class Main:
                     card, (SCREEN_WIDTH / 2 - 20 + c_offset, 520 - c_offset)
                 )
                 c_offset += 10
-        
-        # if self.current_card_image:
-        #     self.screen.blit(self.current_card_image, (200+c_offset, 100+c_offset))  # Position the image above the button
-        #     c_offset += 10
 
     def run(self):
         self.running = True
