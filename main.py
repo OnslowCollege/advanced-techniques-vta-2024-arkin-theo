@@ -334,10 +334,9 @@ class Main:
                     self.p_total += 10
 
                 elif card_drawn.rank == "ACE":
-                    if self.p_total <= 10:
-                        self.p_total += 11
-                    else:
-                        self.p_total += 1
+                    self.p_total += 11
+                    self.check_ace("player")
+
 
                 else:
                     self.p_total += int(card_drawn.rank)
@@ -361,10 +360,8 @@ class Main:
                     self.d_total += 10
 
                 elif card_drawn.rank == "ACE":
-                    if self.d_total <= 10:
-                        self.d_total += 11
-                    else:
-                        self.d_total += 1
+                    self.d_total += 11
+                    self.check_ace("dealer")
 
                 else:
                     self.d_total += int(card_drawn.rank)
