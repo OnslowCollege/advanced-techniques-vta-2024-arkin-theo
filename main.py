@@ -122,7 +122,7 @@ class Main:
         self.current_card_image = None
         self.card_images = self.load_card_images()
 
-        image_path = "C:/Users/arkin/OneDrive/Documents/Blackjack/Sprites/KIN's_Playing_Cards/Back_1.png"
+        image_path = "/workspaces/advanced-techniques-vta-2024-arkin-theo/Sprites/KIN's_Playing_Cards/Back_1.png"
         self.card_back = pygame.image.load(image_path).convert_alpha()
         self.card_back = pygame.transform.scale(self.card_back, (94, 132))
 
