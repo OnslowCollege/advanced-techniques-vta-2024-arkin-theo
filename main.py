@@ -359,6 +359,10 @@ class Main:
 
                     else:
                         self.d_score.update_text(f"{self.d_total - int(self.d_hidden_card)}")
+                
+
+                
+
 
 
 
