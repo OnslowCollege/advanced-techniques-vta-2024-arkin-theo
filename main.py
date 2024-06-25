@@ -142,7 +142,7 @@ class Main:
         card_images = {}
         for suit in Deck.suits:
             for rank in Deck.ranks:
-                root_dir = "C:/Users/arkin/OneDrive/Documents/Blackjack/Sprites/KIN's_Playing_Cards"
+                root_dir = "/workspaces/advanced-techniques-vta-2024-arkin-theo/Sprites/KIN's_Playing_Cards"
 
                 # Update this to the correct path for your images
                 image_path = f"{root_dir}/{suit}_{rank}.png"
