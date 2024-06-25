@@ -85,11 +85,8 @@ class Main:
                 root_dir = ""
 
                 # Update this to the correct path for your images
-                # image_path = f"C:/Users/arkin/OneDrive/Documents/Blackjack-pygame/Sprites/{suit}_{rank}.png"
                 image_path = f"{root_dir}/{suit}_{rank}.png"
-                # image_path = f"C:/Users/arkin/OneDrive/Documents/Blackjack-pygame/Sprites/kanban-sprint1.png"
                 image = pygame.image.load(image_path).convert_alpha()
-                # scaled_image = pygame.transform.scale(image, (20, 100))  # Scale to 20x100 pixels
                 card_images[f'{rank}_of_{suit}'] = image
         return card_images
 
