@@ -118,11 +118,11 @@ class Main:
         self.d_total = 0
 
 
-        self.d_shoe = Deck(nmb_decks=1)  # Initialize the Deck
+        self.d_shoe = Deck(nmb_decks=8)  # Initialize the Deck
         self.current_card_image = None
         self.card_images = self.load_card_images()
 
-        image_path = "/workspaces/advanced-techniques-vta-2024-arkin-theo/Sprites/KIN's_Playing_Cards/Back_1.png"
+        image_path = "C:/Users/arkin/OneDrive/Documents/Blackjack/Sprites/KIN's_Playing_Cards/Back_1.png"
         self.card_back = pygame.image.load(image_path).convert_alpha()
         self.card_back = pygame.transform.scale(self.card_back, (94, 132))
 
@@ -142,7 +142,7 @@ class Main:
         card_images = {}
         for suit in Deck.suits:
             for rank in Deck.ranks:
-                root_dir = "/workspaces/advanced-techniques-vta-2024-arkin-theo/Sprites/KIN's_Playing_Cards"
+                root_dir = "C:/Users/arkin/OneDrive/Documents/Blackjack/Sprites/KIN's_Playing_Cards"
 
                 # Update this to the correct path for your images
                 image_path = f"{root_dir}/{suit}_{rank}.png"
@@ -165,7 +165,12 @@ class Main:
             
                 elif self.stand_button.is_clicked(event):
                     self.p_turn = False
-                    self.d_score.update_text(f"{self.d_total}")
+                    if self.d_total > 21:
+                        self.d_score.update_text("BUSTED")
+                    elif self.d_total == 21:
+                        self.d_score.update_text("BLACKJACK")
+                    else:
+                        self.d_score.update_text(f"{self.d_total}")
 
             else:
                 if self.d_total > 21:
@@ -198,14 +203,14 @@ class Main:
         # )
         # dc_offset += 25
 
-        for card in self.previous_cards_d:
-            if self.previous_cards_d.index(card) == 0 and self.p_turn:
+        for i, card in enumerate(self.previous_cards_d):
+            if i == 0 and self.p_turn:
                 self.screen.blit(
                     self.card_back, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
                 )
                 dc_offset += 25
 
-            if self.previous_cards_d.index(card) != 0 and self.p_turn:
+            if i != 0 and self.p_turn:
                 self.screen.blit(
                     card, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
                 )
@@ -250,6 +255,69 @@ class Main:
             pygame.display.flip()
 
 
+    def check_ace(self, owner):
+        if owner == "player":
+            # Check player bust
+            if self.p_total > 21:
+                found = False
+                for c in self.draw_history_p:
+                    if c.rank == "ACE":
+                        ind = self.draw_history_p.index(c)
+                        self.draw_history_p.pop(ind)
+                        found = True
+                        break
+                if not found:
+                    self.p_score.update_text("BUSTED")
+                    self.p_turn = False
+                    print("BUSTED - p", self.p_total)
+                else:
+                    self.p_total -= 10
+                    if self.p_total > 21:
+                        self.check_ace("player")
+                    else:
+                        self.p_score.update_text(f"{self.p_total}")
+
+            elif self.p_total == 21:
+                self.p_score.update_text("BLACKJACK")
+                print("BLACKJACK - p", self.p_total)
+                self.p_turn = False
+                
+            else:
+                self.p_score.update_text(f"{self.p_total}")
+
+
+        if owner == "dealer":
+            # Check dealer bust
+            if self.d_total > 21:
+                found = False
+                for c in self.draw_history_d:
+                    if c.rank == "ACE":
+                        ind = self.draw_history_d.index(c)
+                        self.draw_history_d.pop(ind)
+                        found = True
+                        break
+
+                if not found:
+                    self.d_score.update_text("BUSTED")
+                    print("BUSTED - d - ", self.d_total)
+
+                else:
+                    self.d_total -= 10
+                    if self.d_total > 21:
+                        self.check_ace("dealer")
+                    else:
+                        self.d_score.update_text(f"{self.d_total}")
+
+                        if self.p_turn:
+                            self.d_score.update_text(f"{self.d_total+10}")
+
+
+            elif self.d_total == 21:
+                self.d_score.update_text("BLACKJACK")
+                print("BLACKJACK - d -", self.d_total)
+            else:
+                self.d_score.update_text(f"{self.d_total}")
+
 
     def card_drawn(self, onwer: str):
         card_drawn = self.d_shoe.deal()
@@ -274,33 +342,14 @@ class Main:
                 else:
                     self.p_total += int(card_drawn.rank)
 
-                # Check player bust
                 if self.p_total > 21:
-                    found = False
-                    for c in self.draw_history_p:
-                        if c.rank == "ACE":
-                            ind = self.draw_history_p.index(c)
-                            self.draw_history_p.pop(ind)
-                            found = True
-                            break
-                    if not found:
-                        self.p_score.update_text("BUSTED")
-                        self.p_turn = False
-                        print("BUSTED - p")
-                    else:
-                        self.p_total -= 10
-                        if self.p_total > 21:
-                            self.p_score.update_text("BUSTED")
-                            self.p_turn = False
-                            print("BUSTED - p")
-                        else:
-                            self.p_score.update_text(f"{self.p_total}")
-
+                    self.check_ace("player")
 
                 elif self.p_total == 21:
                     self.p_score.update_text("BLACKJACK")
-                    print("BLACKJACK - p")
+                    print("BLACKJACK - p", self.p_total)
                     self.p_turn = False
+                
                 else:
                     self.p_score.update_text(f"{self.p_total}")
 
@@ -320,33 +369,16 @@ class Main:
                 else:
                     self.d_total += int(card_drawn.rank)
 
-                # Check dealer bust
                 if self.d_total > 21:
-                    found = False
-                    for c in self.draw_history_d:
-                        if c.rank == "ACE":
-                            ind = self.draw_history_d.index(c)
-                            self.draw_history_d.pop(ind)
-                            found = True
-                            break
-
-                    if not found:
-                        self.d_score.update_text("BUSTED")
-                        print("BUSTED - d")
-                    else:
-                        self.d_total -= 10
-                        if self.d_total > 21:
-                            self.d_score.update_text("BUSTED")
-                            print("BUSTED - d")
-                        else:
-                            self.d_score.update_text(f"{self.d_total}")
-
+                    self.check_ace("dealer")
 
                 elif self.d_total == 21:
                     self.d_score.update_text("BLACKJACK")
-                    print("BLACKJACK - d")
+                    print("BLACKJACK - d", self.d_total)
+
                 else:
                     self.d_score.update_text(f"{self.d_total}")
+
                 
                 # Start of game
                 if self.p_turn:
