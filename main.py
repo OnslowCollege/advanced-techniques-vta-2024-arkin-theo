@@ -66,7 +66,13 @@ class Main:
         self.screen = pygame.display.set_mode(self.screenDim)
         self.background = BLACK
         self.running = False
-        self.button = Button(x=SCREEN_WIDTH/2+100, y=620, width=100, height=50, text='Draw Card')
+        self.button = Button(
+            x=SCREEN_WIDTH / 2 - 50,
+            y=620,
+            width=100,
+            height=50,
+            text="Draw Card",
+        )
         self.d_shoe = Deck(nmb_decks=1)  # Initialize the Deck
         self.current_card_image = None
         self.card_images = self.load_card_images()
@@ -103,7 +109,9 @@ class Main:
         c_offset = 0
         for card in self.previous_cards_p:
             if card:
-                self.screen.blit(card, (100+c_offset, 250-c_offset))
+                self.screen.blit(
+                    card, (SCREEN_WIDTH / 2 - 20 + c_offset, 520 - c_offset)
+                )
                 c_offset += 10
         
         # if self.current_card_image:
