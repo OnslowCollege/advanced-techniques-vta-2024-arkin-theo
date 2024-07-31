@@ -1,5 +1,7 @@
 import pygame
 import random
+import os
+
 
 class Card:
     def __init__(self, suit, rank):
@@ -7,16 +9,22 @@ class Card:
         self.rank = rank
         self.owner = ""
 
+
+
+
 class Deck:
     suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
     ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "ACE"]
+
 
     def __init__(self, nmb_decks):
         self.cards = [Card(suit, rank) for suit in self.suits for rank in self.ranks for _ in range(nmb_decks)]
         self.shuffle()
 
+
     def shuffle(self):
         random.shuffle(self.cards)
+
 
     def deal(self):
         if len(self.cards) > 0:
@@ -24,19 +32,28 @@ class Deck:
         else:
             return None
 
+
+
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
+GRAY = (175, 175, 175)
+
+
+
 
 class Button:
-    def __init__(self, x, y, width, height, text, color=GRAY, hover_color=WHITE, font_size=30):
-        self.rect = pygame.Rect(x, y, width, height)
+    def __init__(self, x, y, width, height, text, color=(208, 25, 32), hover_color=(135, 17, 20), font_size=30):
+        self.rect = pygame.Rect(x, y, width+20, height)
         self.color = color
         self.hover_color = hover_color
-        self.font = pygame.font.Font(None, font_size)
+        self.font = pygame.font.Font('Grand9K.ttf', font_size)
         self.text = text
-        self.text_surface = self.font.render(text, True, BLACK)
-        self.text_rect = self.text_surface.get_rect(center=self.rect.center)
+        self.text_surface = self.font.render(text, True, WHITE, BLACK)
+        self.text_surface.set_colorkey((0,0,0))
+    #    self.text_surface = pygame.Surface(x,y)
+    #    self.text_rect.center = self.rect.center
+
 
     def draw(self, screen):
         mouse_pos = pygame.mouse.get_pos()
@@ -44,7 +61,8 @@ class Button:
             pygame.draw.rect(screen, self.hover_color, self.rect)
         else:
             pygame.draw.rect(screen, self.color, self.rect)
-        screen.blit(self.text_surface, self.text_rect)
+        screen.blit(self.text_surface, self.rect)
+
 
     def is_clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -52,10 +70,14 @@ class Button:
                 return True
         return False
 
+
     def update_text(self, new_text):
         self.text = new_text
         self.text_surface = self.font.render(new_text, True, BLACK)
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
+
+
+
 
 class ScoreText:
     def __init__(self, x, y, width, height, text, font_size=30):
@@ -65,40 +87,55 @@ class ScoreText:
         self.text_surface = self.font.render(text, True, BLACK)
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
 
+
     def draw(self, screen):
         screen.blit(self.text_surface, self.text_rect)
+
 
     def update_text(self, new_text):
         self.text = new_text
         self.text_surface = self.font.render(new_text, True, WHITE)
         self.text_rect = self.text_surface.get_rect(center=self.rect.center)
 
+
+
+
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 HIDDEN_NMB = 1
 
+
+
+
 class Main:
     def __init__(self):
+        self.restarted = False
         pygame.init()
         self.screenDim = (SCREEN_WIDTH, SCREEN_HEIGHT)
         self.screen = pygame.display.set_mode(self.screenDim)
-        self.background = BLACK
+    #    self.background = pygame.transform.scale_by(pygame.image.load('black_jack_table.jpg').convert(),1)
+        self.background = pygame.image.load('black_jack_table.jpg').convert()
         self.running = False
+
+
         # Player buttons
+        self.restart_button = Button(x=SCREEN_WIDTH / 2 -230/2 , y=1.25*SCREEN_HEIGHT/3, width=230, height=75, text="Restart", font_size=50)
+        self.start_button = Button(x=SCREEN_WIDTH / 2 -180/2 , y=1.25*SCREEN_HEIGHT/3, width=180, height=75, text="Start", font_size=50)
         self.hit_button = Button(
-            x=SCREEN_WIDTH / 2 - 100,
+            x=SCREEN_WIDTH / 2 -100,
             y=620,
-            width=100,
+            width=50,
             height=50,
             text="Hit"
         )
         self.stand_button = Button(
-            x=SCREEN_WIDTH / 2,
+            x=SCREEN_WIDTH / 2 +25,
             y=620,
             width=100,
             height=50,
             text="Stand"
         )
+
 
         # Score texts
         self.p_score = ScoreText(
@@ -119,32 +156,42 @@ class Main:
         self.d_total = 0
 
 
-        self.d_shoe = Deck(nmb_decks=8)  # Initialize the Deck
+        self.d_shoe = Deck(nmb_decks=1)  # Initialize the Deck
         self.current_card_image = None
         self.card_images = self.load_card_images()
 
-        image_path = r"C:\Users\arkin\OneDrive\Documents\Blackjack-pygame\Sprites\KIN's_Playing_Cards\Back_1.png"
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+
+        image_path = dir_path + r"\Sprites\KIN's_Playing_Cards\Back_1.png"
         self.card_back = pygame.image.load(image_path).convert_alpha()
         self.card_back = pygame.transform.scale(self.card_back, (94, 132))
+
 
         self.previous_cards_p = []
         self.previous_cards_d = []
 
+
         self.draw_history_p = []
         self.draw_history_d = []
+
 
         self.d_hidden_card = ""
         self.counter = 0
 
+
         self.p_turn = True
         self.hide_card = True
-
-
+        self.started = False
+        self.player_win = None
+        self.hand_finsihed = False
     def load_card_images(self):
         card_images = {}
         for suit in Deck.suits:
             for rank in Deck.ranks:
-                root_dir = r"C:\Users\arkin\OneDrive\Documents\Blackjack-pygame\Sprites\KIN's_Playing_Cards"
+                dir_path = os.path.dirname(os.path.realpath(__file__))
+                root_dir = dir_path + r"\Sprites\KIN's_Playing_Cards"
+
 
                 # Update this to the correct path for your images
                 image_path = f"{root_dir}/{suit}_{rank}.png"
@@ -152,10 +199,19 @@ class Main:
                 image = pygame.transform.scale(image, (94, 132))
                 card_images[f'{rank}_of_{suit}'] = image
 
+
         return card_images
+
 
     def poll(self):
         for event in pygame.event.get():
+            if self.start_button.is_clicked(event):
+                self.started = True
+            self.restarted = False
+            if self.restart_button.is_clicked(event):
+                self.restarted = True
+
+
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYUP:
@@ -164,7 +220,8 @@ class Main:
             if self.p_total < 21:
                 if self.hit_button.is_clicked(event):
                     self.card_drawn("player")
-            
+
+
                 elif self.stand_button.is_clicked(event):
                     self.p_turn = False
                     if self.d_total > 21:
@@ -174,22 +231,44 @@ class Main:
                     else:
                         self.d_score.update_text(f"{self.d_total}")
 
+
             else:
+                self.p_turn = False
                 if self.d_total > 21:
                     self.d_score.update_text("BUSTED")
                 elif self.d_total == 21:
                     self.d_score.update_text("BLACKJACK")
                 else:
                     self.d_score.update_text(f"{self.d_total}")
+            if ((not self.p_turn and self.d_total >= 17) or (self.p_total>21)) and self.restarted:
+                print(self.restarted)
+                self.previous_cards_p.clear()
+                self.previous_cards_d.clear()
+                if self.d_total > 0:
+                    self.d_total = 0
+                if self.p_total>0:
+                    self.p_total = 0
+                self.player_win = None
+                self.p_turn = True
+                self.restarted = False
+                self.setup()
+                if self.p_total<self.d_total and self.d_total > 21 or self.p_total > 21:
+                    self.player_win = False
+                else:
+                    self.player_win = True
 
 
-    def update(self, dt): # idk might get rid of
+
+
+    def update(self, dt):  # idk might get rid of
         pass
+
 
     def draw(self):
         if self.p_turn:
             self.hit_button.draw(self.screen)
             self.stand_button.draw(self.screen)
+
 
         # Draw all cards
         pc_offset = 0
@@ -200,10 +279,12 @@ class Main:
             )
             pc_offset += 25
 
+
         # self.screen.blit(
         #     self.card_back, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
         # )
         # dc_offset += 25
+
 
         for i, card in enumerate(self.previous_cards_d):
             if i == HIDDEN_NMB and self.p_turn:
@@ -212,26 +293,29 @@ class Main:
                 )
                 dc_offset += 25
 
+
             if i != HIDDEN_NMB and self.p_turn:
                 self.screen.blit(
                     card, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
                 )
                 dc_offset += 25
 
+
             if not self.p_turn:
                 self.screen.blit(
                     card, (SCREEN_WIDTH / 2 - 20 + dc_offset, 210)
                 )
                 dc_offset += 25
-
-
-
         # Draw the scores
         self.p_score.draw(self.screen)
         self.d_score.draw(self.screen)
 
 
     def setup(self):
+        self.previous_cards_p.clear()
+        self.previous_cards_d.clear()
+        self.draw_history_p.clear()
+        self.draw_history_d.clear()
         self.card_drawn("player")
         self.card_drawn("dealer")
         self.card_drawn("player")
@@ -239,20 +323,33 @@ class Main:
 
 
     def run(self):
+
+
         self.setup()
         self.running = True
         clock = pygame.time.Clock()
         while self.running:
             dt = clock.tick(40) / 1000.0
-            self.screen.fill(self.background)
-            
+            self.screen.blit(self.background, (0,0))
+        #    self.screen.blit((0,0))
             self.poll()
-            self.draw()
+            if self.started:
+
+
+                self.draw()
+                if not self.p_turn:
+                    while self.d_total < 17:
+                        self.card_drawn("dealer")
+            else:
+                self.start_button.draw(self.screen)
+            if self.p_turn is False and self.d_total >= 17:
+
+
+                self.restart_button.draw(self.screen)
+
+
             self.update(dt)
 
-            if self.p_turn != True:
-                while self.d_total < 17:
-                    self.card_drawn("dealer")
 
             pygame.display.flip()
 
@@ -279,11 +376,13 @@ class Main:
                     else:
                         self.p_score.update_text(f"{self.p_total}")
 
+
             elif self.p_total == 21:
                 self.p_score.update_text("BLACKJACK")
                 print("BLACKJACK - p", self.p_total)
                 self.p_turn = False
-                
+
+
             else:
                 self.p_score.update_text(f"{self.p_total}")
 
@@ -299,9 +398,11 @@ class Main:
                         found = True
                         break
 
+
                 if not found:
                     self.d_score.update_text("BUSTED")
                     print("BUSTED - d - ", self.d_total)
+
 
                 else:
                     self.d_total -= 10
@@ -310,8 +411,11 @@ class Main:
                     else:
                         self.d_score.update_text(f"{self.d_total}")
 
+
                         if self.p_turn:
-                            self.d_score.update_text(f"{self.d_total+10}")
+                            self.d_score.update_text(f"{self.d_total + 10}")
+
+
 
 
             elif self.d_total == 21:
@@ -320,12 +424,14 @@ class Main:
             else:
                 self.d_score.update_text(f"{self.d_total}")
 
+
     # Change
     def card_drawn(self, onwer: str):
 
 
         card_drawn = self.d_shoe.deal()
         card_drawn.owner = onwer
+
 
         if self.d_hidden_card == "" and card_drawn.owner == "dealer":
             self.counter += 1
@@ -334,6 +440,7 @@ class Main:
         if self.counter == HIDDEN_NMB:
             self.d_hidden_card = card_drawn.rank
 
+
         if card_drawn:
             # If player
             if card_drawn.owner == "player":
@@ -341,22 +448,28 @@ class Main:
                 if card_drawn.rank in ["J", "Q", "K"]:
                     self.p_total += 10
 
+
                 elif card_drawn.rank == "ACE":
                     self.p_total += 11
                     self.check_ace("player")
 
 
+
+
                 else:
                     self.p_total += int(card_drawn.rank)
 
+
                 if self.p_total > 21:
                     self.check_ace("player")
+
 
                 elif self.p_total == 21:
                     self.p_score.update_text("BLACKJACK")
                     print("BLACKJACK - p", self.p_total)
                     self.p_turn = False
-                
+
+
                 else:
                     self.p_score.update_text(f"{self.p_total}")
 
@@ -367,39 +480,41 @@ class Main:
                 if card_drawn.rank in ["J", "Q", "K"]:
                     self.d_total += 10
 
+
                 elif card_drawn.rank == "ACE":
                     self.d_total += 11
                     self.check_ace("dealer")
 
+
                 else:
                     self.d_total += int(card_drawn.rank)
 
+
                 if self.d_total > 21:
                     self.check_ace("dealer")
+
 
                 elif self.d_total == 21:
                     self.d_score.update_text("BLACKJACK")
                     print("BLACKJACK - d", self.d_total)
 
+
                 else:
                     self.d_score.update_text(f"{self.d_total}")
 
-                
+
                 # Start of game
                 if self.p_turn:
                     if self.d_hidden_card in ["J", "Q", "K"]:
                         self.d_score.update_text(f"{self.d_total - 10}")
 
+
                     elif self.d_hidden_card == "ACE":
                         self.d_score.update_text(f"{self.d_total - 11}")
 
+
                     else:
                         self.d_score.update_text(f"{self.d_total - int(self.d_hidden_card)}")
-                
-
-                
-
-
 
 
             # Save card to a history list
@@ -411,10 +526,14 @@ class Main:
                 elif card_drawn.owner == "dealer":
                     self.previous_cards_d.append(self.current_card_image)
         else:
-            self.hit_button.update_text("No more cards") # wont be possible if reshuffle deck
+            self.hit_button.update_text("No more cards")  # wont be possible if reshuffle deck
+
+
+
 
 if __name__ == '__main__':
     main = Main()
     print("starting...")
     main.run()
     print("shutting down...")
+
