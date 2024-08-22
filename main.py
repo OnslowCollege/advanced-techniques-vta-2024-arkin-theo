@@ -348,7 +348,10 @@ class Main:
                         if (self.p_total == 21):
                             self.bank += self.current_bet*2
                     else:
-                        self.bank += self.current_bet*2
+                        if (self.event == "no_risk"):
+                            self.bank += self.current_bet
+                        else:
+                            self.bank += self.current_bet*2
                     
                     print(self.bank)
                     self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
