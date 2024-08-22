@@ -4,7 +4,6 @@ import pygame
 import os
 
 
-
 class Button:
     def __init__(self, x, y, width, height, text, color=(208, 25, 32), hover_color=(135, 17, 20), font_size=30):
         self.rect = pygame.Rect(x, y, width+20, height)
