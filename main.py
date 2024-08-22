@@ -494,6 +494,7 @@ class Main:
                 # reset bank
                 self.bank = 10000
 
+                # new slider fix
                 self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
                                         [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
                 self.bet_button.draw(self.screen)
