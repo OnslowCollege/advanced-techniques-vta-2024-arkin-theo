@@ -4,6 +4,7 @@ import pygame
 import os
 
 
+
 class Button:
     def __init__(self, x, y, width, height, text, color=(208, 25, 32), hover_color=(135, 17, 20), font_size=30):
         self.rect = pygame.Rect(x, y, width+20, height)
@@ -323,8 +324,7 @@ class Main:
                     print(self.bank)
                     self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
                                                     [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
-                    if self.bank == 0:
-                        pygame.quit()
+                    
 
 
                 elif self.p_total == self.d_total:
@@ -452,7 +452,7 @@ class Main:
 
 
             
-
+            
             dt = clock.tick(40) / 1000.0
             self.screen.blit(self.background, (0,0))
             self.poll()
@@ -460,6 +460,9 @@ class Main:
 
             self.event_text.update_text(f"Current Event: {self.event if self.event else 'None'}")
             self.event_text.draw(self.screen)
+
+            
+            self.bank = int(self.bank)
 
             if self.bet:
 
@@ -479,9 +482,26 @@ class Main:
 
 
                 self.restart_button.draw(self.screen)
+    
             self.account_balance = self.font.render(f'${self.bank}', True,
                                                     (255, 255, 255), (208, 25, 32))
             self.screen.blit(self.account_balance,self.account_balance_rect)
+
+            if self.bank <= 0 and not self.restarted and self.bet_button_isdrawn:
+                # reset bank
+                self.bank = 10000
+
+                self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
+                                        [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
+                self.bet_button.draw(self.screen)
+                self.bet_button_isdrawn = True
+                self.current_bet = round(self.bet_slider.slider_update(self.screen, (255,255,255))/10)*10
+                self.current_bet_text = self.font.render(f'${round(self.current_bet / 10) * 10}', True,
+                                                        (255, 255, 255), (208, 25, 32))
+                self.screen.blit(self.current_bet_text, self.current_bet_text_rect)
+                # pygame.QUIT()
+
+
             self.update(dt)
             pygame.display.flip()
 
