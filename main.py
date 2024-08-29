@@ -357,6 +357,8 @@ class Main:
                             self.bank += self.current_bet*2
                     
                     print(self.bank)
+
+                # new slider to fix bug
                 self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
                                                 [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
 
