@@ -340,7 +340,10 @@ class Main:
 
 
                 elif self.p_total == 21:
-                    self.bank += 2.5*self.current_bet
+                    if self.event == "no_risk":
+                        self.bank += 1.5*self.current_bet
+                    else:
+                        self.bank += 2.5*self.current_bet
 
 
                 else:
@@ -354,8 +357,8 @@ class Main:
                             self.bank += self.current_bet*2
                     
                     print(self.bank)
-                    self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
-                                                    [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
+                self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
+                                                [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
 
 
                 self.event = "None"
@@ -452,10 +455,6 @@ class Main:
         clock = pygame.time.Clock()
 
         while self.running:
-
-
-            
-            
             dt = clock.tick(40) / 1000.0
             self.screen.blit(self.background, (0,0))
             self.poll()
@@ -464,7 +463,6 @@ class Main:
             self.event_text.update_text(f"Current Event: {self.event if self.event else 'None'}")
             self.event_text.draw(self.screen)
 
-            
             self.bank = int(self.bank)
 
             if self.bet:
@@ -494,7 +492,6 @@ class Main:
                 # reset bank
                 self.bank = 10000
 
-                # new slider fix
                 self.bet_slider = slider.slider([640, 540], self.screen, [10, 40], (90, 90, 90), [640, 540],
                                         [400, 20], self.bank, self.minimum_bet, (255, 255, 255))
                 self.bet_button.draw(self.screen)
